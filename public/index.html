@@ -38,11 +38,11 @@
 
             </div>
             <div style="display: flex; gap: 1rem; align-items: center;">
-                <button id="themeToggle" class="btn-icon"
+                <button id="themeToggle" class="btn-icon" aria-label="Toggle dark mode"
                     style="background:transparent; border:none; cursor:pointer; color:var(--clr-primary); font-size:1.2rem;">
                     <i class="fa-solid fa-moon"></i>
                 </button>
-                <div class="mobile-toggle" id="mobileToggle">
+                <div class="mobile-toggle" id="mobileToggle" aria-label="Open navigation menu" role="button" tabindex="0">
                     <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="hero-graphics">
                     <!-- Glassmorphism decorative elements -->
-                    <img src="assets/india_voting_scene.png" alt="Indian Election Scene" class="hero-img">
+                    <img src="assets/india_voting_scene.png" alt="Indian Election Scene" class="hero-img" loading="lazy">
                     <div class="glass-card decor-1">
                         <i class="fa-solid fa-check-to-slot" style="color: var(--clr-success);"></i>
                         <div>
@@ -278,8 +278,8 @@
                     </div>
                     <div class="chat-input-area">
                         <form id="chatForm">
-                            <input type="text" id="chatInput" placeholder="Type your question here..." required>
-                            <button type="submit" class="btn btn-primary btn-icon" id="sendBtn">
+                            <input type="text" id="chatInput" placeholder="Type your question here..." required aria-label="Chat message">
+                            <button type="submit" class="btn btn-primary btn-icon" id="sendBtn" aria-label="Send message">
                                 <i class="fa-solid fa-paper-plane"></i>
                             </button>
                         </form>
@@ -297,13 +297,13 @@
                 </div>
                 <div class="gallery-grid">
                     <div class="gallery-item animate-on-scroll">
-                        <img src="assets/india_voting_queue.png" alt="Indian citizens patiently waiting in a queue to vote">
+                        <img src="assets/india_voting_queue.png" alt="Indian citizens patiently waiting in a queue to vote" loading="lazy">
                     </div>
                     <div class="gallery-item animate-on-scroll" style="transition-delay: 0.1s;">
-                        <img src="assets/india_voting_scene.png" alt="A vibrant election scene at an Indian polling booth">
+                        <img src="assets/india_voting_scene.png" alt="A vibrant election scene at an Indian polling booth" loading="lazy">
                     </div>
                     <div class="gallery-item animate-on-scroll" style="transition-delay: 0.2s;">
-                        <img src="assets/india_election_campaign.png" alt="An Indian election awareness campaign">
+                        <img src="assets/india_election_campaign.png" alt="An Indian election awareness campaign" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -385,10 +385,10 @@
 
     <!-- MODALS -->
     <!-- Registration Modal -->
-    <div id="registerModal" class="modal">
+    <div id="registerModal" class="modal" role="dialog" aria-labelledby="registerModalTitle" aria-modal="true">
         <div class="modal-content glassmorphism">
-            <span class="close-btn" id="closeRegister">&times;</span>
-            <h2>Register to Vote</h2>
+            <span class="close-btn" id="closeRegister" aria-label="Close modal">&times;</span>
+            <h2 id="registerModalTitle">Register to Vote</h2>
             <div id="registerFormContainer">
                 <h2>Voter Registration (Form 6)</h2>
                 <p style="margin-bottom: 2rem;">Please fill in your details accurately to register for the upcoming
@@ -490,10 +490,10 @@
     </div>
 
     <!-- Status Check Modal -->
-    <div id="statusModal" class="modal">
+    <div id="statusModal" class="modal" role="dialog" aria-labelledby="statusModalTitle" aria-modal="true">
         <div class="modal-content glassmorphism">
-            <span class="close-btn" id="closeStatus">&times;</span>
-            <h2>Check Registration Status</h2>
+            <span class="close-btn" id="closeStatus" aria-label="Close modal">&times;</span>
+            <h2 id="statusModalTitle">Check Registration Status</h2>
             <p>Enter your <strong>Voter ID</strong> OR your <strong>Name and PIN Code</strong>.</p>
             <form id="statusForm">
                 <div class="form-group">

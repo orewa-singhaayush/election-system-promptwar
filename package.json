@@ -4,7 +4,7 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js"
   },
   "repository": {
@@ -23,6 +23,16 @@
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "@google-cloud/firestore": "^8.5.0",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }
