@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/orewa-singhaayush/election-system-promptwar#readme",
   "dependencies": {
+    "@google-cloud/logging": "^11.2.1",
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

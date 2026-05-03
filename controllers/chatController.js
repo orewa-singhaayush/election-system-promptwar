@@ -1,6 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { validationResult } = require('express-validator');
 const xss = require('xss');
+const logger = require('../config/logger');
 
 // ── Fallback responses ────────────────────────────────────────────────────
 const FALLBACKS = [
@@ -14,11 +15,11 @@ const FALLBACKS = [
 
 function getFallback(message) {
     const msg = (message || '').toLowerCase();
-    if (msg.includes('register') || msg.includes('form') || msg.includes('sign up'))        return FALLBACKS[1];
-    if (msg.includes('check') || msg.includes('status') || msg.includes('list'))            return FALLBACKS[2];
-    if (msg.includes('booth') || msg.includes('polling') || msg.includes('where'))          return FALLBACKS[5];
-    if (msg.includes('cast') || msg.includes('election day') || msg.includes('how to vote'))return FALLBACKS[3];
-    if (msg.includes('move') || msg.includes('transfer') || msg.includes('address'))        return FALLBACKS[4];
+    if (msg.includes('register') || msg.includes('form') || msg.includes('sign up'))         return FALLBACKS[1];
+    if (msg.includes('check') || msg.includes('status') || msg.includes('list'))             return FALLBACKS[2];
+    if (msg.includes('booth') || msg.includes('polling') || msg.includes('where'))           return FALLBACKS[5];
+    if (msg.includes('cast') || msg.includes('election day') || msg.includes('how to vote')) return FALLBACKS[3];
+    if (msg.includes('move') || msg.includes('transfer') || msg.includes('address'))         return FALLBACKS[4];
     return FALLBACKS[0];
 }
 
@@ -44,7 +45,7 @@ function isKeyConfigured() {
     return key && key.trim().length > 10 && key !== 'your_api_key_here';
 }
 
-// ── Single model call — returns text or throws ────────────────────────────
+// ── Single model call ─────────────────────────────────────────────────────
 async function callGemini(genAI, modelName, message) {
     const model = genAI.getGenerativeModel({ model: modelName });
     const prompt = `You are VoteAssist, a smart AI Election Assistant for India.
@@ -71,28 +72,27 @@ const handleChat = async (req, res) => {
 
     // 2. Sanitize
     const message = xss(req.body.message.trim());
-    console.log(`[Chat] ← "${message.substring(0, 100)}"`);
+    logger.info(`User asked: "${message.substring(0, 120)}"`, { event: 'chat_request' });
 
     // 3. Cache hit
     const cacheKey = message.toLowerCase().replace(/\s+/g, ' ');
     const cached = getCached(cacheKey);
     if (cached) {
-        console.log('[Chat] ✓ cache hit');
+        logger.info(`Cache hit for message: "${message.substring(0, 80)}"`, { event: 'cache_hit' });
         return res.json({ reply: cached, cached: true, source: 'cache' });
     }
 
     // 4. No key → fallback immediately
     if (!isKeyConfigured()) {
-        console.warn('[Chat] ✗ API key not configured — using fallback');
+        logger.warn('Fallback triggered: GEMINI_API_KEY not configured', { event: 'fallback', reason: 'no_key' });
         return res.json({ reply: getFallback(message), cached: false, source: 'fallback' });
     }
 
     // 5. Try Gemini with model fallback chain
-    // Try ALL models before giving up — only fall back to static if every model fails
     const MODELS = [
         'gemini-2.5-flash',       // best quality, generous free tier
         'gemini-2.0-flash-lite',  // lightweight, separate quota
-        'gemini-2.0-flash',       // fallback
+        'gemini-2.0-flash',       // last resort
     ];
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
@@ -100,48 +100,47 @@ const handleChat = async (req, res) => {
     for (let i = 0; i < MODELS.length; i++) {
         const modelName = MODELS[i];
         try {
-            console.log(`[Chat] → trying ${modelName}...`);
             const text = await callGemini(genAI, modelName, message);
 
             // Success
-            console.log(`[Chat] ✓ ${modelName} responded (${text.length} chars)`);
+            logger.info(`Gemini success using model: ${modelName}`, {
+                event: 'gemini_success',
+                model: modelName,
+                response_length: String(text.length)
+            });
             setCache(cacheKey, text);
             return res.json({ reply: text, cached: false, source: modelName });
 
         } catch (err) {
             const msg = err.message || '';
-            const isQuota   = msg.includes('429') || msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED');
-            const isNotFound= msg.includes('404') || msg.includes('not found') || msg.includes('not supported');
-            const isAuth    = msg.includes('401') || msg.includes('403') || msg.includes('API_KEY');
-            const isNetwork = msg.includes('ENOTFOUND') || msg.includes('ECONNREFUSED') || msg.includes('network');
+            const isQuota    = msg.includes('429') || msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED');
+            const isNotFound = msg.includes('404') || msg.includes('not found') || msg.includes('not supported');
+            const isAuth     = msg.includes('401') || msg.includes('403') || msg.includes('API_KEY');
+            const isNetwork  = msg.includes('ENOTFOUND') || msg.includes('ECONNREFUSED') || msg.includes('network');
 
             if (isAuth) {
-                // Auth errors won't be fixed by trying another model — log and break
-                console.error(`[Chat] ✗ AUTH error on ${modelName}: ${msg.substring(0, 120)}`);
+                logger.error(`Gemini auth error on ${modelName}: ${msg.substring(0, 120)}`, { event: 'gemini_auth_error', model: modelName });
                 break;
             }
-
+            if (isNetwork) {
+                logger.error(`Gemini network error: ${msg.substring(0, 120)}`, { event: 'gemini_network_error' });
+                break;
+            }
             if (isQuota || isNotFound) {
-                // Quota or wrong model — try next
-                console.warn(`[Chat] ✗ ${modelName} ${isQuota ? 'quota exceeded' : 'not found'} — trying next`);
+                logger.warn(`Gemini model ${modelName} ${isQuota ? 'quota exceeded' : 'not found'} — trying next`, {
+                    event: 'gemini_model_fallback', model: modelName
+                });
                 continue;
             }
 
-            if (isNetwork) {
-                console.error(`[Chat] ✗ Network error: ${msg.substring(0, 120)}`);
-                break; // network is down — no point trying other models
-            }
-
-            // Unknown error — log and try next model anyway
-            console.error(`[Chat] ✗ ${modelName} error: ${msg.substring(0, 120)}`);
+            logger.error(`Gemini unexpected error on ${modelName}: ${msg.substring(0, 120)}`, { event: 'gemini_error', model: modelName });
             if (i < MODELS.length - 1) continue;
         }
     }
 
-    // 6. All models failed — guaranteed fallback (never shows error to user)
-    console.warn('[Chat] ✗ All models failed — using static fallback');
-    const fallback = getFallback(message);
-    return res.json({ reply: fallback, cached: false, source: 'fallback' });
+    // 6. All models failed — guaranteed fallback
+    logger.warn('Fallback triggered: all Gemini models failed', { event: 'fallback', reason: 'all_models_failed' });
+    return res.json({ reply: getFallback(message), cached: false, source: 'fallback' });
 };
 
 module.exports = { handleChat };
