@@ -1,5 +1,6 @@
 const { saveVoter, findVoter } = require('../config/db');
 const { validationResult } = require('express-validator');
+const logger = require('../config/logger');
 
 const generateVoterId = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -12,60 +13,30 @@ const registerVoter = async (req, res) => {
     }
 
     try {
-        const { 
-            fullName, dob, zipCode, gender, relativeName, 
-            houseNo, street, village, postOffice, district, state, constituency 
-        } = req.body;
+        const { fullName, dob, zipCode } = req.body;
 
         // Age check
         const birthDate = new Date(dob);
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
-
-        if (
-            today.getMonth() < birthDate.getMonth() ||
-            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-        ) {
+        if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
             age--;
         }
 
         if (age < 18) {
-            return res.status(400).json({
-                success: false,
-                message: 'You must be at least 18 years old to vote.'
-            });
+            return res.status(400).json({ success: false, message: 'You must be at least 18 years old to vote.' });
         }
 
         const voterId = generateVoterId();
-
-        const newVoter = {
-            voterId,
-            fullName,
-            dob,
-            zipCode,
-            gender,
-            relativeName,
-            houseNo,
-            street,
-            village,
-            postOffice,
-            district,
-            state,
-            constituency,
-            status: 'Approved',
-            registeredAt: new Date().toISOString()
-        };
+        const newVoter = { ...req.body, voterId, status: 'Approved', registeredAt: new Date().toISOString() };
 
         await saveVoter(newVoter);
+        logger.info({ type: 'voter_registration', voterId, message: 'Voter registered successfully' });
 
-        res.json({
-            success: true,
-            voterId,
-            status: 'Approved'
-        });
+        res.json({ success: true, data: { voterId, status: 'Approved' } });
 
     } catch (error) {
-        console.error('Registration Error:', error);
+        logger.error({ type: 'voter_registration_error', message: error.message });
         res.status(500).json({ success: false, message: 'Registration failed' });
     }
 };
@@ -76,19 +47,14 @@ const checkStatus = async (req, res) => {
         const voter = await findVoter({ voterId, fullName, zipCode });
 
         if (!voter) {
-            return res.status(404).json({
-                success: false,
-                message: 'Voter not found'
-            });
+            return res.status(404).json({ success: false, message: 'Voter not found' });
         }
 
-        res.json({
-            success: true,
-            voter
-        });
+        logger.info({ type: 'voter_status_check', voterId: voter.voterId, message: 'Voter status found' });
+        res.json({ success: true, data: { voter } });
 
     } catch (error) {
-        console.error('Status Check Error:', error);
+        logger.error({ type: 'voter_status_error', message: error.message });
         res.status(500).json({ success: false, message: 'Status check failed' });
     }
 };

@@ -23,7 +23,7 @@ function getFallback(message) {
     return FALLBACKS[0];
 }
 
-// ── In-Memory Cache (TTL = 10 min, max 200 entries) ───────────────────────
+// ── In-Memory Cache ───────────────────────────────────────────────────────
 const responseCache = new Map();
 const CACHE_TTL_MS = 10 * 60 * 1000;
 
@@ -39,108 +39,58 @@ function setCache(key, value) {
     responseCache.set(key, { value, timestamp: Date.now() });
 }
 
-// ── Key check ─────────────────────────────────────────────────────────────
 function isKeyConfigured() {
     const key = process.env.GEMINI_API_KEY;
     return key && key.trim().length > 10 && key !== 'your_api_key_here';
 }
 
-// ── Single model call ─────────────────────────────────────────────────────
 async function callGemini(genAI, modelName, message) {
     const model = genAI.getGenerativeModel({ model: modelName });
-    const prompt = `You are VoteAssist, a smart AI Election Assistant for India.
-Your job:
-- Help people understand the Indian voting and election process.
-- Give clear, concise, step-by-step guidance.
-- Keep responses under 150 words.
-- Be friendly and helpful.
-- NEVER say you cannot help with election questions.
-
-User question: ${message}`;
-
+    const prompt = `You are VoteAssist, a smart AI Election Assistant for India. Help people understand the Indian voting process. Concise, step-by-step guidance under 150 words. User question: ${message}`;
     const result = await model.generateContent(prompt);
     return result.response.text();
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────
 const handleChat = async (req, res) => {
-    // 1. Validate
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ error: errors.array()[0].msg });
+        return res.status(400).json({ success: false, error: errors.array()[0].msg });
     }
 
-    // 2. Sanitize
     const message = xss(req.body.message.trim());
-    logger.info(`User asked: "${message.substring(0, 120)}"`, { event: 'chat_request' });
+    logger.info({ type: "chat_request", message });
 
-    // 3. Cache hit
     const cacheKey = message.toLowerCase().replace(/\s+/g, ' ');
     const cached = getCached(cacheKey);
     if (cached) {
-        logger.info(`Cache hit for message: "${message.substring(0, 80)}"`, { event: 'cache_hit' });
-        return res.json({ reply: cached, cached: true, source: 'cache' });
+        logger.info({ type: "chat_response", source: "cache", cached: true, message: "Cache hit" });
+        return res.json({ success: true, data: { reply: cached, source: "cache" } });
     }
 
-    // 4. No key → fallback immediately
     if (!isKeyConfigured()) {
-        logger.warn('Fallback triggered: GEMINI_API_KEY not configured', { event: 'fallback', reason: 'no_key' });
-        return res.json({ reply: getFallback(message), cached: false, source: 'fallback' });
+        const fb = getFallback(message);
+        logger.warn({ type: "chat_response", source: "fallback", reason: "no_key", message: "Key not configured" });
+        return res.json({ success: true, data: { reply: fb, source: "fallback" } });
     }
 
-    // 5. Try Gemini with model fallback chain
-    const MODELS = [
-        'gemini-2.5-flash',       // best quality, generous free tier
-        'gemini-2.0-flash-lite',  // lightweight, separate quota
-        'gemini-2.0-flash',       // last resort
-    ];
-
+    const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-flash'];
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
 
-    for (let i = 0; i < MODELS.length; i++) {
-        const modelName = MODELS[i];
+    for (let modelName of MODELS) {
         try {
             const text = await callGemini(genAI, modelName, message);
-
-            // Success
-            logger.info(`Gemini success using model: ${modelName}`, {
-                event: 'gemini_success',
-                model: modelName,
-                response_length: String(text.length)
-            });
+            logger.info({ type: "chat_response", source: modelName, cached: false, message: "Gemini success" });
             setCache(cacheKey, text);
-            return res.json({ reply: text, cached: false, source: modelName });
-
+            return res.json({ success: true, data: { reply: text, source: modelName } });
         } catch (err) {
-            const msg = err.message || '';
-            const isQuota    = msg.includes('429') || msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED');
-            const isNotFound = msg.includes('404') || msg.includes('not found') || msg.includes('not supported');
-            const isAuth     = msg.includes('401') || msg.includes('403') || msg.includes('API_KEY');
-            const isNetwork  = msg.includes('ENOTFOUND') || msg.includes('ECONNREFUSED') || msg.includes('network');
-
-            if (isAuth) {
-                logger.error(`Gemini auth error on ${modelName}: ${msg.substring(0, 120)}`, { event: 'gemini_auth_error', model: modelName });
-                break;
-            }
-            if (isNetwork) {
-                logger.error(`Gemini network error: ${msg.substring(0, 120)}`, { event: 'gemini_network_error' });
-                break;
-            }
-            if (isQuota || isNotFound) {
-                logger.warn(`Gemini model ${modelName} ${isQuota ? 'quota exceeded' : 'not found'} — trying next`, {
-                    event: 'gemini_model_fallback', model: modelName
-                });
-                continue;
-            }
-
-            logger.error(`Gemini unexpected error on ${modelName}: ${msg.substring(0, 120)}`, { event: 'gemini_error', model: modelName });
-            if (i < MODELS.length - 1) continue;
+            logger.warn({ type: "gemini_model_fallback", model: modelName, error: err.message });
         }
     }
 
-    // 6. All models failed — guaranteed fallback
-    logger.warn('Fallback triggered: all Gemini models failed', { event: 'fallback', reason: 'all_models_failed' });
-    return res.json({ reply: getFallback(message), cached: false, source: 'fallback' });
+    const fb = getFallback(message);
+    logger.warn({ type: "chat_response", source: "fallback", message: "All models failed" });
+    return res.json({ success: true, data: { reply: fb, source: "fallback" } });
 };
 
 module.exports = { handleChat };

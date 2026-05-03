@@ -1,52 +1,49 @@
 /**
- * Google Cloud Logging wrapper.
- * - On Cloud Run: writes structured logs to Cloud Logging via GCP SDK.
- * - Locally / if SDK unavailable: falls back to console, never crashes.
+ * Google Cloud Logging wrapper (Structured).
  */
 
 let log = null;
 
 try {
     const { Logging } = require('@google-cloud/logging');
-    const logging = new Logging();              // auto-detects project on Cloud Run
+    const logging = new Logging();
     log = logging.log('voteassist-log');
-    console.log('[GCLogger] ✓ Google Cloud Logging initialised');
+    console.log('[GCLogger] ✓ Structured Logging initialised');
 } catch (e) {
-    console.warn('[GCLogger] Cloud Logging unavailable — using console fallback:', e.message);
+    console.warn('[GCLogger] Cloud Logging unavailable:', e.message);
 }
 
 /**
  * Write a structured log entry.
  * @param {'INFO'|'WARNING'|'ERROR'} severity
- * @param {string} message
- * @param {object} [labels]
+ * @param {object} payload
  */
-async function writeLog(severity, message, labels = {}) {
-    // Always mirror to stdout (Cloud Run captures stdout anyway)
-    const prefix = severity === 'ERROR' ? '✗' : severity === 'WARNING' ? '⚠' : '✓';
-    console.log(`[GCLogger] ${prefix} [${severity}] ${message}`);
+async function writeLog(severity, payload) {
+    const timestamp = new Date().toISOString();
+    const message = payload.message || payload.type || 'No message provided';
+    
+    // Console mirror for Cloud Run capturing
+    console.log(`[${severity}] [${timestamp}] ${JSON.stringify(payload)}`);
 
-    if (!log) return; // local dev — console only
+    if (!log) return;
 
     try {
         const metadata = {
             resource: { type: 'global' },
             severity,
-            labels: { service: 'voteassist', ...labels }
+            labels: { service: 'voteassist', ...payload.labels }
         };
-        const entry = log.entry(metadata, { message, ...labels });
+        const entry = log.entry(metadata, { ...payload, timestamp });
         await log.write(entry);
     } catch (e) {
-        // Never crash the request over a logging failure
-        console.warn('[GCLogger] Failed to write to Cloud Logging:', e.message);
+        console.warn('[GCLogger] Write error:', e.message);
     }
 }
 
-// Convenience shortcuts
 const logger = {
-    info:    (msg, labels) => writeLog('INFO',    msg, labels),
-    warn:    (msg, labels) => writeLog('WARNING', msg, labels),
-    error:   (msg, labels) => writeLog('ERROR',   msg, labels),
+    info:    (payload) => writeLog('INFO',    payload),
+    warn:    (payload) => writeLog('WARNING', payload),
+    error:   (payload) => writeLog('ERROR',   payload),
 };
 
 module.exports = logger;
