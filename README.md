@@ -1,101 +1,72 @@
 # 🗳️ VoteAssist – Interactive Election Assistant
 
-An interactive web application that simplifies the **election process, voting steps, and important timelines** for users through a clean UI and AI-powered assistance.
+An interactive web application that helps users understand the **election process, voting steps, and timelines** in a simple, visual, and interactive way.
 
 ---
 
 ## 🚀 Overview
 
-**VoteAssist** is designed to make voting awareness easy and engaging.  
-It provides a **step-by-step voting guide, election timelines, FAQs, and an AI chatbot** to help users understand everything about elections.
+**VoteAssist** is built to simplify voting awareness using:
 
-This project focuses on improving **voter awareness**, especially for first-time voters.
+- Step-by-step guidance  
+- Visual timelines  
+- AI chatbot interaction  
+- Registration & status features  
+
+It is especially useful for **first-time voters** and educational purposes.
 
 ---
 
 ## ✨ Features
 
-### 🧭 1. Step-by-Step Voting Guide
-- Interactive stepper UI
-- Covers:
-  - Registration
-  - Verification
-  - Voting process
-  - Final submission
+### 🧭 Step-by-Step Voting Guide
+- Interactive multi-step UI
+- Covers full voting journey
 
----
+### 📆 Election Timeline
+- Important election dates
+- Visual progress indicators
 
-### 📆 2. Election Timeline
-- Important deadlines like:
-  - Registration start & end
-  - Early voting
-  - Election day
-- Visual timeline with status indicators
+### 🤖 AI Chat Assistant
+- Ask election-related questions
+- Instant responses from backend
 
----
+### 📝 Voter Registration Form
+- Complete Form 6 style structure
+- Collects personal & address details
 
-### 🤖 3. AI Chat Assistant
-- Ask questions like:
-  - "How to vote?"
-  - "What ID is required?"
-- Instant responses via backend API
-
----
-
-### 📝 4. Voter Registration Form
-- Full structured form (Form 6 style)
-- Includes:
-  - Personal details
-  - Address details
-  - Constituency info
-
----
-
-### 🔍 5. Registration Status Checker
-- Check via:
+### 🔍 Registration Status Checker
+- Check using:
   - Voter ID  
-  - Name + PIN Code  
+  - Name + PIN code  
 
----
+### ❓ FAQ Section
+- Flip-card UI for quick answers
 
-### ❓ 6. FAQ Section
-- Flip-card UI for quick answers:
-  - ID requirements  
-  - Registration process  
-  - Polling booth info  
+### 🖼️ Gallery
+- Real-life voting visuals
 
----
-
-### 🖼️ 7. Gallery Section
-- Visual representation of:
-  - Voting scenes  
-  - Campaign awareness  
-  - Citizen participation  
-
----
-
-### 🎨 8. Modern UI/UX
+### 🎨 UI/UX
 - Responsive design  
-- Dark/Light mode toggle  
-- Glassmorphism UI  
-- Animations & transitions  
+- Dark/Light mode  
+- Smooth animations  
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- HTML5  
-- CSS3  
-- JavaScript (DOM + Events)
+- HTML  
+- CSS  
+- JavaScript  
 
 ### Backend
 - Node.js  
 - Express.js  
 
 ### Other
-- JSON (data storage)
-- Fetch API (frontend ↔ backend communication)
+- JSON (data storage)  
+- Fetch API  
 
 ---
 
@@ -104,32 +75,28 @@ This project focuses on improving **voter awareness**, especially for first-time
 ```bash
 election-system-promptwar/
 │
-├── client/
+├── public/              # Frontend files
 │   ├── index.html
 │   ├── css/
-│   │   └── styles.css
 │   ├── js/
-│   │   └── script.js
 │   └── assets/
-│       ├── india_voting_scene.png
-│       ├── india_voting_queue.png
-│       └── india_election_campaign.png
 │
-├── server/
-│   ├── server.js
-│   ├── voters.json
+├── data/                # JSON data
+│   └── voters.json
 │
-├── .env
+├── server.js            # Backend server
+├── .env                 # Environment variables
 ├── package.json
-├── README.md
-└── .gitignore
+├── package-lock.json
+├── .gitignore
+└── README.md
 ```
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 1️⃣ Clone the repository
+### 1️⃣ Clone the repo
 ```bash
 git clone https://github.com/your-username/election-system-promptwar.git
 cd election-system-promptwar
@@ -140,18 +107,17 @@ cd election-system-promptwar
 npm install
 ```
 
-### 3️⃣ Create `.env` file
+### 3️⃣ Create `.env`
 ```env
 PORT=3000
 ```
 
-### 4️⃣ Run the backend server
+### 4️⃣ Run server
 ```bash
-node server/server.js
+node server.js
 ```
 
-### 5️⃣ Open the app
-Open in browser:
+### 5️⃣ Open in browser
 ```
 http://localhost:3000
 ```
@@ -160,10 +126,10 @@ http://localhost:3000
 
 ## 🧩 How It Works
 
-1. User interacts with UI (guide / chatbot / forms)
-2. Frontend sends request using Fetch API
-3. Backend processes request
-4. Response is displayed instantly
+1. User interacts with UI  
+2. Frontend sends request using Fetch API  
+3. Backend (Node.js) processes request  
+4. Response is returned and displayed  
 
 ---
 
@@ -171,32 +137,29 @@ http://localhost:3000
 
 - 🧑‍🎓 First-time voters  
 - 🏫 College projects  
-- 🗳️ Election awareness campaigns  
+- 🗳️ Awareness campaigns  
 - 📚 Educational demos  
 
 ---
 
 ## 🔮 Future Improvements
 
-- 🔐 Authentication system  
-- 🌍 Multi-language support  
-- 📱 Mobile-first optimization  
-- 🤖 Advanced AI (GPT-based responses)  
-- 🗺️ Real-time election data integration  
+- 🤖 Advanced AI integration  
+- 📱 Mobile-first UI improvements  
+- 🗺️ Live election data  
 
 ---
 
 ## 👨‍💻 Author
 
 **Aayush Kumar Singh**  
-💻 Computer Engineering Student  
-🔐 Cybersecurity Enthusiast  
+Computer Engineering Student | Cybersecurity Learner  
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License.
+MIT License
 
 ---
 
