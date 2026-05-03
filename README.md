@@ -15,6 +15,9 @@ An interactive web application that helps users understand the **election proces
 
 It is especially useful for **first-time voters** and educational purposes.
 
+### 🌐 Live Demo
+Check out the live application here: [VoteAssist on Cloud Run](https://voteassist-service-77968146284.us-central1.run.app)
+
 ---
 
 ## ✨ Features
