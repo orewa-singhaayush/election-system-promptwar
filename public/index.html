@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Assistant | Your Guide to Voting</title>
+    <meta name="description"
+        content="An interactive, easy-to-follow guide to understand the election process, timelines, and steps to vote.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="nav-content container">
+            <div class="logo">
+                <i class="fa-solid fa-check-to-slot"></i> VoteAssist
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="#guide">How to Vote</a>
+                <a href="#timeline">Timeline</a>
+                <a href="#assistant">Ask AI</a>
+                <a href="#faq">FAQ</a>
+                <a href="#gallery">Gallery</a>
+
+
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button id="themeToggle" class="btn-icon"
+                    style="background:transparent; border:none; cursor:pointer; color:var(--clr-primary); font-size:1.2rem;">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div class="mobile-toggle" id="mobileToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-text">
+                    <div class="badge">Your Voice Matters</div>
+                    <h1>Voting Made <span class="highlight">Simple.</span></h1>
+                    <p>Your interactive, step-by-step guide to registering, researching, and casting your ballot with
+                        confidence.</p>
+                    <div class="hero-actions">
+                        <a href="#guide" class="btn btn-primary">Start the Guide <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#timeline" class="btn btn-secondary">View Deadlines</a>
+                    </div>
+                </div>
+                <div class="hero-graphics">
+                    <!-- Glassmorphism decorative elements -->
+                    <img src="assets/india_voting_scene.png" alt="Indian Election Scene" class="hero-img">
+                    <div class="glass-card decor-1">
+                        <i class="fa-solid fa-check-to-slot" style="color: var(--clr-success);"></i>
+                        <div>
+                            <strong>Election Day</strong>
+                            <span>November 5th</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Importance of Voting Section -->
+        <section class="importance-section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>Why Your Vote Matters</h2>
+                    <p>Voting is more than just a right—it's your power to shape the community and the future.</p>
+                </div>
+                <div class="feature-grid">
+                    <!-- Feature 1 -->
+                    <div class="flip-card animate-on-scroll">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <i class="fa-solid fa-users-viewfinder text-blue" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h3>Local Impact</h3>
+                                <p style="font-size: 0.9rem; color: var(--clr-text-light);">Hover to see why</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Local Impact</h3>
+                                <p>Local elections often affect your daily life more than national ones. Funding for schools, roads, and emergency services are decided locally.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="flip-card animate-on-scroll" style="transition-delay: 0.1s;">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <i class="fa-solid fa-scale-balanced text-red" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h3>Power of One</h3>
+                                <p style="font-size: 0.9rem; color: var(--clr-text-light);">Hover to see why</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Power of One</h3>
+                                <p>Many elections are decided by a handful of votes. Your single vote has the power to break a tie and decide the direction of policy.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="flip-card animate-on-scroll" style="transition-delay: 0.2s;">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <i class="fa-solid fa-hand-holding-heart text-blue" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h3>Civic Duty</h3>
+                                <p style="font-size: 0.9rem; color: var(--clr-text-light);">Hover to see why</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Civic Duty</h3>
+                                <p>Voting honors the sacrifices made by previous generations to secure this democratic right and ensures everyone has a voice.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step-by-Step Guide Section -->
+        <section id="guide" class="guide-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>How to Vote</h2>
+                    <p>Follow these 4 simple steps to ensure your ballot is cast and counted.</p>
+                </div>
+
+                <div class="stepper-container">
+                    <!-- Progress Tracker -->
+                    <div class="progress-tracker">
+                        <div class="step-indicator active" data-step="1">1</div>
+                        <div class="progress-line">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="step-indicator" data-step="2">2</div>
+                        <div class="progress-line">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="step-indicator" data-step="3">3</div>
+                        <div class="progress-line">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="step-indicator" data-step="4">4</div>
+                    </div>
+
+                    <!-- Step Content Card -->
+                    <div class="step-card glassmorphism">
+                        <div class="step-content" id="stepContent">
+                            <!-- Content injected via JS -->
+                        </div>
+
+                        <div class="step-controls">
+                            <button class="btn btn-outline" id="prevBtn" disabled>
+                                <i class="fa-solid fa-chevron-left"></i> Previous
+                            </button>
+                            <span class="step-counter">Step <span id="currentStepText">1</span> of 4</span>
+                            <button class="btn btn-primary" id="nextBtn">
+                                Next Step <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section id="timeline" class="timeline-section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>Important Deadlines</h2>
+                    <p>Don't miss these critical dates for the upcoming election.</p>
+                </div>
+
+                <div class="timeline">
+                    <!-- Timeline Item 1 -->
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-dot past"></div>
+                        <div class="timeline-content glassmorphism">
+                            <div class="timeline-date">September 1, 2024</div>
+                            <h3>Registration Opens</h3>
+                            <p>The official voter registration period begins. You can register online, by mail, or in
+                                person at your local election office.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2 -->
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-dot current">
+                            <div class="pulse"></div>
+                        </div>
+                        <div class="timeline-content glassmorphism border-highlight">
+                            <div class="timeline-date text-blue font-bold">October 15, 2024</div>
+                            <h3>Registration Deadline</h3>
+                            <p>Last day to register to vote. Applications must be postmarked or submitted online by
+                                11:59 PM today.</p>
+                            <span class="badge badge-urgent">Upcoming</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-dot future"></div>
+                        <div class="timeline-content glassmorphism">
+                            <div class="timeline-date">Oct 20 - Nov 3, 2024</div>
+                            <h3>Early Voting Period</h3>
+                            <p>Cast your ballot early at designated polling locations to avoid long lines on Election
+                                Day.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 4 -->
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-dot future"></div>
+                        <div class="timeline-content glassmorphism">
+                            <div class="timeline-date">November 5, 2024</div>
+                            <h3>Election Day</h3>
+                            <p>Polls are open from 7:00 AM to 8:00 PM. If you are in line when polls close, stay in
+                                line—you have the right to vote!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Register to Vote CTA Section -->
+        <section class="register-cta">
+            <div class="container cta-container glassmorphism animate-on-scroll">
+                <div class="cta-text">
+                    <h2>Ready to make a difference?</h2>
+                    <p>It takes less than 2 minutes to check your registration status or register for the first time.
+                    </p>
+                </div>
+                <div class="cta-actions">
+                    <a href="#" class="btn btn-primary" id="btnOpenRegister">Register Online</a>
+                    <a href="#" class="btn btn-outline" id="btnOpenStatus">Check Status</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Chatbot Section -->
+        <section id="assistant" class="assistant-section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>AI Election Assistant</h2>
+                    <p>Ask our smart assistant any questions about voting, deadlines, or requirements.</p>
+                </div>
+
+                <div class="chat-container glassmorphism">
+                    <div class="chat-header">
+                        <i class="fa-solid fa-robot text-blue"></i>
+                        <div>
+                            <strong>VoteAssist AI</strong>
+                            <span>Online & Ready to help</span>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant-msg">
+                            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                            <div class="msg-bubble">Hi! I can help answer questions about the voting process. What would
+                                you like to know?</div>
+                        </div>
+                        <!-- Messages injected here -->
+                    </div>
+                    <div class="chat-input-area">
+                        <form id="chatForm">
+                            <input type="text" id="chatInput" placeholder="Type your question here..." required>
+                            <button type="submit" class="btn btn-primary btn-icon" id="sendBtn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION -->
+        <section id="gallery" class="gallery-section">
+            <div class="container text-center">
+                <div class="section-header animate-on-scroll">
+                    <h2>Democracy in Action</h2>
+                    <p>Glimpses of Indian citizens participating in the world's largest democratic process.</p>
+                </div>
+                <div class="gallery-grid">
+                    <div class="gallery-item animate-on-scroll">
+                        <img src="assets/india_voting_queue.png" alt="Indian citizens patiently waiting in a queue to vote">
+                    </div>
+                    <div class="gallery-item animate-on-scroll" style="transition-delay: 0.1s;">
+                        <img src="assets/india_voting_scene.png" alt="A vibrant election scene at an Indian polling booth">
+                    </div>
+                    <div class="gallery-item animate-on-scroll" style="transition-delay: 0.2s;">
+                        <img src="assets/india_election_campaign.png" alt="An Indian election awareness campaign">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Quick answers to common voting questions.</p>
+                </div>
+                <div class="faq-grid">
+                    <!-- FAQ 1 -->
+                    <div class="flip-card animate-on-scroll">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="faq-icon"><i class="fa-solid fa-id-card"></i></div>
+                                <h3>Do I need ID to vote?</h3>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Yes!</h3>
+                                <p>In India, you usually need your Voter ID (EPIC card). You can also use Aadhaar, PAN, or Passport if your name is in the roll.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FAQ 2 -->
+                    <div class="flip-card animate-on-scroll" style="transition-delay: 0.1s;">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="faq-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                                <h3>How to register?</h3>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Easy!</h3>
+                                <p>You can register online using our "Register Online" button or via the official Voter Helpline App/NVSP portal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FAQ 3 -->
+                    <div class="flip-card animate-on-scroll" style="transition-delay: 0.2s;">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="faq-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <h3>Where to vote?</h3>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Find Booth</h3>
+                                <p>Your polling booth is usually in a nearby school or community hall. Check your booth location on the ECI website.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fa-solid fa-check-to-slot"></i>
+                    <span>VoteAssist</span>
+                </div>
+                <p>Empowering voters through clear, accessible information.</p>
+            </div>
+            <div class="footer-links">
+                <strong>Resources</strong>
+                <a href="#">Verify Registration</a>
+                <a href="#">Find Polling Place</a>
+                <a href="#">Voter Rights</a>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 VoteAssist. For educational purposes. Always verify deadlines with official state resources.
+            </p>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content glassmorphism">
+            <span class="close-btn" id="closeRegister">&times;</span>
+            <h2>Register to Vote</h2>
+            <div id="registerFormContainer">
+                <h2>Voter Registration (Form 6)</h2>
+                <p style="margin-bottom: 2rem;">Please fill in your details accurately to register for the upcoming
+                    elections.</p>
+
+                <form id="registerForm">
+                    <!-- Personal Details -->
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-user"></i> Personal Details
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" placeholder="As per documents" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Third Gender">Third Gender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="relativeName">Father's / Mother's / Husband's Name</label>
+                            <input type="text" id="relativeName" placeholder="Relative's Name" required>
+                        </div>
+                    </div>
+
+                    <!-- Address Details -->
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-house"></i> Address Details
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="houseNo">House / Door Number</label>
+                            <input type="text" id="houseNo" placeholder="e.g. 123/A" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="street">Street / Area / Locality</label>
+                            <input type="text" id="street" placeholder="Street name" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="village">Town / Village</label>
+                            <input type="text" id="village" placeholder="City or Village" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postOffice">Post Office</label>
+                            <input type="text" id="postOffice" placeholder="Post Office" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="district">District</label>
+                            <input type="text" id="district" placeholder="District" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State / UT</label>
+                            <select id="state" required>
+                                <option value="">Select State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <!-- More states can be added -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zipCode">PIN Code</label>
+                            <input type="text" id="zipCode" pattern="[0-9]{6}" title="Six digit PIN code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="constituency">Assembly Constituency</label>
+                            <input type="text" id="constituency" placeholder="Constituency Name" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; margin-top: 2rem; padding: 1rem;">Complete Registration</button>
+                </form>
+            </div>
+            <div id="registerResult" class="form-result"></div>
+        </div>
+    </div>
+
+    <!-- Status Check Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content glassmorphism">
+            <span class="close-btn" id="closeStatus">&times;</span>
+            <h2>Check Registration Status</h2>
+            <p>Enter your <strong>Voter ID</strong> OR your <strong>Name and PIN Code</strong>.</p>
+            <form id="statusForm">
+                <div class="form-group">
+                    <label for="voterId">Voter ID</label>
+                    <input type="text" id="voterId" placeholder="e.g. A1B2C3">
+                </div>
+
+                <div style="text-align: center; margin: 1rem 0; color: #94a3b8; font-weight: bold; font-size: 0.9rem;">—
+                    OR —</div>
+
+                <div class="form-group">
+                    <label for="statusName">Full Name</label>
+                    <input type="text" id="statusName" placeholder="Your Name">
+                </div>
+                <div class="form-group">
+                    <label for="statusZip">PIN Code</label>
+                    <input type="text" id="statusZip" placeholder="110001">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Check
+                    Status</button>
+            </form>
+            <div id="statusResult" class="form-result"></div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
