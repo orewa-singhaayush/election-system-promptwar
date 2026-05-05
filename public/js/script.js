@@ -99,8 +99,116 @@ function initMobileMenu() {
 function initStepper() {
     const contentDiv = document.getElementById('stepContent');
     const nextBtn = document.getElementById('nextBtn');
-    if (!contentDiv || !nextBtn) return;
-    // (Existing stepper logic remains functional, skipping boilerplate for speed)
+    const prevBtn = document.getElementById('prevBtn');
+    const stepText = document.getElementById('currentStepText');
+    const progressFill = document.getElementById('progressFill');
+    const indicators = document.querySelectorAll('.step-indicator');
+
+    if (!contentDiv || !nextBtn || !prevBtn || !stepText) return;
+
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    const steps = [
+        {
+            title: "Register as a Voter",
+            desc: "The first step is ensuring you are registered in the electoral roll. If you're 18+ and a citizen, you're eligible!",
+            details: [
+                { icon: "fa-id-card", text: "Fill Form 6 online or via Voter Helpline App" },
+                { icon: "fa-file-invoice", text: "Keep age and address proof documents ready" },
+                { icon: "fa-clock", text: "Register at least 3 weeks before election day" }
+            ]
+        },
+        {
+            title: "Verify Your Name",
+            desc: "Having a Voter ID isn't enough; your name MUST be in the current Electoral Roll to vote.",
+            details: [
+                { icon: "fa-magnifying-glass", text: "Check status on NVSP.in or our 'Check Status' tool" },
+                { icon: "fa-list-check", text: "Ensure your details (name, photo) are correct" },
+                { icon: "fa-envelope", text: "Receive your Voter Information Slip (VIS) before polls" }
+            ]
+        },
+        {
+            title: "Know Your Booth",
+            desc: "Your polling station is usually a school or community center near your residence.",
+            details: [
+                { icon: "fa-map-location-dot", text: "Find booth location on the Voter Helpline app" },
+                { icon: "fa-route", text: "Plan your visit early in the day to avoid heat/lines" },
+                { icon: "fa-users", text: "Check for 'Queue Status' if available in your city" }
+            ]
+        },
+        {
+            title: "Cast Your Ballot",
+            desc: "Visit the booth, get your finger inked, and use the Electronic Voting Machine (EVM).",
+            details: [
+                { icon: "fa-fingerprint", text: "First officer checks name, second inks finger" },
+                { icon: "fa-keyboard", text: "Press the blue button next to your candidate's symbol" },
+                { icon: "fa-receipt", text: "Verify the slip in the VVPAT glass for 7 seconds" }
+            ]
+        }
+    ];
+
+    function updateUI() {
+        const step = steps[currentStep - 1];
+        
+        // Update content with animation
+        contentDiv.style.opacity = '0';
+        setTimeout(() => {
+            contentDiv.innerHTML = `
+                <h3>${step.title}</h3>
+                <p>${step.desc}</p>
+                <ul class="step-details">
+                    ${step.details.map(d => `
+                        <li><i class="fa-solid ${d.icon}"></i> ${d.text}</li>
+                    `).join('')}
+                </ul>
+            `;
+            contentDiv.style.opacity = '1';
+        }, 300);
+
+        // Update indicators
+        indicators.forEach((ind, idx) => {
+            const s = idx + 1;
+            ind.classList.remove('active', 'completed');
+            if (s === currentStep) ind.classList.add('active');
+            else if (s < currentStep) ind.classList.add('completed');
+        });
+
+        // Update progress bar
+        const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        if (progressFill) progressFill.style.width = `${progress}%`;
+
+        // Update buttons
+        stepText.textContent = currentStep;
+        prevBtn.disabled = currentStep === 1;
+        
+        if (currentStep === totalSteps) {
+            nextBtn.innerHTML = 'Got it! <i class="fa-solid fa-check"></i>';
+        } else {
+            nextBtn.innerHTML = 'Next Step <i class="fa-solid fa-chevron-right"></i>';
+        }
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateUI();
+        } else {
+            // Smooth scroll to next section or show success
+            showToast('You are ready to vote! 🇮🇳', 'success');
+            document.getElementById('timeline').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateUI();
+        }
+    });
+
+    // Initial render
+    updateUI();
 }
 
 // ── AI Chatbot ────────────────────────────────────────────────────────────
